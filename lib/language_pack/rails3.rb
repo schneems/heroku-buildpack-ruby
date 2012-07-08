@@ -27,11 +27,44 @@ class LanguagePack::Rails3 < LanguagePack::Rails2
     })
   end
 
+alias :original_release :release
+
+def release
+  check_pending_migrations
+  original_release
+end
+
 private
 
   def plugins
     super.concat(%w( rails3_serve_static_assets )).uniq
   end
+
+  def check_pending_migrations
+    log("check_migrations") do
+      if rake_task_defined?("db:abort_if_pending_migrations")
+        puts "Checking for pending migrations:"
+
+        ENV["RAILS_ENV"]    ||= "production"
+        time = Benchmark.realtime { pipe("env PATH=$PATH:bin bundle exec rake db:abort_if_pending_migrations 2>&1") }
+
+        puts "pending migration check done: (#{"%.2f" % time}s)"
+        if $?.success?
+          log "check_migrations", :status => "success"
+          puts "  == No migrations pending"
+        else
+          log "check_migrations", :status => "failure"
+          puts "  ======================================"
+          puts "  == You have pending migrations      =="
+          puts "  == you need to run migrations:      =="
+          puts "  == $ heroku run rake db:migrate     =="
+          puts "  ======================================"
+        end
+      end
+    end
+  end
+
+
 
   # runs the tasks for the Rails 3.1 asset pipeline
   def run_assets_precompile_rake_task
