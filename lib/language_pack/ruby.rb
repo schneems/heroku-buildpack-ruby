@@ -13,6 +13,9 @@ class LanguagePack::Ruby < LanguagePack::Base
   NODE_JS_BINARY_PATH = "node-#{NODE_VERSION}"
   JVM_BASE_URL        = "http://heroku-jvm-langpack-java.s3.amazonaws.com"
   JVM_VERSION         = "openjdk7-latest"
+  MRUBY_BINARY           = "https://s3.amazonaws.com/schneems-heroku/mruby.tgz"
+
+
 
   # detects if this is a valid Ruby app
   # @return [Boolean] true if it's a Ruby app
@@ -47,21 +50,31 @@ class LanguagePack::Ruby < LanguagePack::Base
 
   def compile
     Dir.chdir(build_path)
-    remove_vendor_bundle
-    install_ruby
-    install_jvm
+    # remove_vendor_bundle
+    # install_ruby
+    # install_jvm
     setup_language_pack_environment
     setup_profiled
     allow_git do
-      install_language_pack_gems
-      build_bundler
-      create_database_yml
-      install_binaries
-      run_assets_precompile_rake_task
+      install_mruby
+      # install_language_pack_gems
+      # build_bundler
+      # create_database_yml
+      # install_binaries
+      # run_assets_precompile_rake_task
     end
   end
 
 private
+
+  def install_mruby
+    topic("Installing mruby")
+    bin_dir = "vendor/mruby"
+    FileUtils.mkdir_p bin_dir
+    Dir.chdir(bin_dir) do |dir|
+      run("curl #{MRUBY_BINARY} -s -o - | tar xzf -")
+    end
+  end
 
   # the base PATH environment variable to be used
   # @return [String] the resulting PATH
