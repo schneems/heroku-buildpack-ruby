@@ -10,6 +10,8 @@ module LanguagePack
     Dir.chdir(args.first)
 
     pack = [ Rails3, Rails2, Rack, Ruby ].detect do |klass|
+      puts "Checking #{klass}"
+      puts klass.use?
       klass.use?
     end
 
