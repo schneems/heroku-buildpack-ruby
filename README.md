@@ -1,3 +1,8 @@
+# Important
+
+This Buildpack is not officially supported by Heroku and has very limited support by the Bundler team. It's *strongly* recommended to test this buildpack on a test application before
+thinking of using this in production.
+
 # Heroku Buildpack for Ruby
 ![ruby](https://cloud.githubusercontent.com/assets/51578/13712725/3c6b3368-e793-11e5-83c1-728440111358.png)
 
