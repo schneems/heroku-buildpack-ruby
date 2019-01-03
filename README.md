@@ -19,7 +19,7 @@ Example Usage:
     $ ls
     Gemfile Gemfile.lock
 
-    $ heroku create --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --buildpack https://github.com/bundler/heroku-buildpack-bundler2.git
 
     $ git push heroku master
     ...
@@ -53,7 +53,7 @@ Example Usage:
     $ ls config/environment.rb
     config/environment.rb
 
-    $ heroku create --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --buildpack https://github.com/bundler/heroku-buildpack-bundler2.git
 
     $ git push heroku master
     ...
@@ -87,7 +87,7 @@ Example Usage:
     $ ls config/application.rb
     config/application.rb
 
-    $ heroku create --buildpack https://github.com/heroku/heroku-buildpack-ruby.git
+    $ heroku create --buildpack https://github.com/bundler/heroku-buildpack-bundler2.git
 
     $ git push heroku master
     -----> Heroku receiving push
