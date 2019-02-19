@@ -88,8 +88,33 @@ WARNING
     end
   end
 
+  def warn_deprecated_buildpack
+    warn(<<-WARNING, inline: true)
+This buildpack was created as a stop-gap measure to allow running applications with Bundler 2 on Heroku.
+Heroku now supports Bundler 2 directly: https://devcenter.heroku.com/changelog-items/1563
+
+Please discontinue use of this buildpack and instead directly use the `heroku/ruby` buildpack.
+
+To remove this buildpack use the `heroku buildpacks` command to list your existing buildpacks.
+
+If you only have one buildpack listed you can run:
+
+```
+heroku buildpacks:set heroku/ruby
+```
+
+If you have multiple buildpacks, you'll need to add the buildpack to the correct location using
+`heroku buildpacks:add heroku/ruby -i <correct index>` and then remove this buildpack via:
+
+```
+heroku buildpacks:remove https://github.com/bundler/heroku-buildpack-bundler2
+```
+WARNING
+  end
+
   def compile
     instrument 'ruby.compile' do
+      warn_deprecated_buildpack
       # check for new app at the beginning of the compile
       new_app?
       Dir.chdir(build_path)
