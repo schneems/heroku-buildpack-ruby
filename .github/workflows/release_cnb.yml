@@ -1,10 +1,10 @@
 name: Release CNB
 
-on:
-  release:
-    types:
-      - created
-# on: [push] # Could use to push tags
+# on:
+#   release:
+#     types:
+#       - created
+on: [push] # Could use to push tags
 
 jobs:
   build:
@@ -37,12 +37,22 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: buildpack.tgz
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
+          draft: false
+          prerelease: false
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./buildpack.tgz
           asset_name: heroku-buildpack-ruby-${{ env.VERSION }}.tgz
           asset_content_type: application/gzip
