@@ -1,10 +1,10 @@
 name: Release CNB
 
-# on:
-#   release:
-#     types:
-#       - created
-on: [push]
+on:
+  release:
+    types:
+      - created
+# on: [push] # Could use to push tags
 
 jobs:
   build:
@@ -24,3 +24,25 @@ jobs:
           name: buildpack.tgz
           path: buildpacks/*
 
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Get Version'
+        run: |
+          [[ $GITHUB_REF =~ ^refs\/tags\/(.*)$ ]] && version=${BASH_REMATCH[1]}
+          echo "::set-env name=VERSION::$version"
+      - name: 'Download list binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: buildpack.tgz
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.upload_url }}
+          asset_path: ./buildpack.tgz
+          asset_name: heroku-buildpack-ruby-${{ env.VERSION }}.tgz
+          asset_content_type: application/gzip
