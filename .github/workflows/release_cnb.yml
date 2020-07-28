@@ -1,0 +1,26 @@
+name: Release CNB
+
+# on:
+#   release:
+#     types:
+#       - created
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.40.0
+        with:
+          ruby-version: 2.6.6
+      - uses: actions/checkout@v2
+      - name: bundle install
+        run: bundle install --jobs 4 --retry 3
+      - name: build tar file
+        run: bundle exec rake buildpack:tarball
+      - uses: actions/upload-artifact@v2
+        with:
+          name: buildpack.tgz
+          path: buildpacks/*
+
